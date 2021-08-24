@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/jbramirez03/Employee-database/issues"
   },
-  "homepage": "https://github.com/jbramirez03/Employee-database#readme"
+  "homepage": "https://github.com/jbramirez03/Employee-database#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "inquirer": "^8.1.2",
+    "mysql2": "^2.3.0"
+  }
 }
