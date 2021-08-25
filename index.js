@@ -1,6 +1,8 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+const { viewDepartments } = require('./scripts/actions');
 const actionChoices = require('./scripts/Prompts');
+const cTable = require('console.table');
 
 const db = mysql.createConnection(
     {
@@ -17,6 +19,7 @@ inquirer
     .then(answers => {
         switch (answers.action) {
             case 'View all departments':
+                viewDepartments();
                 break;
             case 'View all roles':
                 break;
