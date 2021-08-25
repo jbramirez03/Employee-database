@@ -1,5 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
+const actionChoices = require('./scripts/Prompts');
 
 const db = mysql.createConnection(
     {
@@ -10,3 +11,4 @@ const db = mysql.createConnection(
     },
     console.log(`Connected to database.`)
   );
+
