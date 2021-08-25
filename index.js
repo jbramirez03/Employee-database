@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-const { viewDepartments, viewRoles } = require('./scripts/actions');
+const { viewDepartments, viewRoles, viewEmployees } = require('./scripts/actions');
 const actionChoices = require('./scripts/Prompts');
 const cTable = require('console.table');
 
@@ -25,6 +25,7 @@ inquirer
                 viewRoles();
                 break;
             case 'View all employees':
+                viewEmployees();
                 break;
             case 'Add a department':
                 break;

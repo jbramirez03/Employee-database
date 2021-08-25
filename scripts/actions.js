@@ -31,7 +31,18 @@ const viewRoles = () => {
     });
 };
 
+const viewEmployees = () => {
+    db.query('SELECT * FROM employees', function(err, results){
+        if(err){
+            throw err;
+        } else {
+            console.table(results);
+        }
+    });
+};
+
 module.exports = {
     viewDepartments,
-    viewRoles
+    viewRoles,
+    viewEmployees
 }
