@@ -8,7 +8,7 @@ const db = mysql.createConnection(
     {
         host: 'localhost',
         user: 'root',
-        password: 'jb0cme1214',
+        password: 'newpassword',
         database: 'employees_db'
     },
     console.log(`Connected to database.`)
@@ -16,33 +16,34 @@ const db = mysql.createConnection(
 
 function startPrompt() {
     inquirer
-    .prompt(actionChoices)
-    .then(answers => {
-        switch (answers.action) {
-            case 'View all departments':
-                viewDepartments();
-                break;
-            case 'View all roles':
-                viewRoles();
-                break;
-            case 'View all employees':
-                viewEmployees();
-                break;
-            case 'Add a department':
-                break;
-            case 'Add a role':
-                break;
-            case 'Add an employee':
-                break;
-            case 'Update an employee role':
-                break;
-        }
-    });
+        .prompt(actionChoices)
+        .then(answers => {
+            switch (answers.action) {
+                case 'View all departments':
+                    viewDepartments();
+                    break;
+                case 'View all roles':
+                    viewRoles();
+                    break;
+                case 'View all employees':
+                    viewEmployees();
+                    break;
+                case 'Add a department':
+                    addDepartment(answers.departmentName)
+                    break;
+                case 'Add a role':
+                    break;
+                case 'Add an employee':
+                    break;
+                case 'Update an employee role':
+                    break;
+            }
+        });
 }
 
 const viewDepartments = () => {
-    db.query('SELECT * FROM departments', function(err, results){
-        if(err){
+    db.query('SELECT * FROM departments', function (err, results) {
+        if (err) {
             throw err;
         } else {
             console.table(results);
@@ -52,8 +53,8 @@ const viewDepartments = () => {
 };
 
 const viewRoles = () => {
-    db.query('SELECT * FROM roles', function(err, results){
-        if(err){
+    db.query('SELECT * FROM roles', function (err, results) {
+        if (err) {
             throw err;
         } else {
             console.table(results);
@@ -63,8 +64,8 @@ const viewRoles = () => {
 };
 
 const viewEmployees = () => {
-    db.query('SELECT * FROM employees', function(err, results){
-        if(err){
+    db.query('SELECT * FROM employees', function (err, results) {
+        if (err) {
             throw err;
         } else {
             console.table(results);
@@ -73,6 +74,19 @@ const viewEmployees = () => {
     });
 };
 
+const addDepartment = (value) => {
+
+    db.query("INSERT INTO departments (name) VALUES (?)", value, function (err, results) {
+        if (err) {
+            throw err;
+        } else {
+            console.log(`Successfully added department.\n`);
+            db.query("SELECT * FROM departments", function (err, results) {
+                console.table(results);
+            });
+        }
+    });
+};
 
 
 startPrompt();
