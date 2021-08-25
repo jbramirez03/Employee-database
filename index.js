@@ -15,7 +15,22 @@ const db = mysql.createConnection(
 inquirer
     .prompt(actionChoices)
     .then(answers => {
-        console.log(answers.action);
+        switch (answers.action) {
+            case 'View all departments':
+                break;
+            case 'View all roles':
+                break;
+            case 'View all employees':
+                break;
+            case 'Add a department':
+                break;
+            case 'Add a role':
+                break;
+            case 'Add an employee':
+                break;
+            case 'Update an employee role':
+                break;
+        }
     })
     .catch(error => {
         if (error) {
