@@ -11,7 +11,7 @@ const actionChoices = [
         type: 'input',
         name: 'departmentName',
         message: 'What is the name of the department?',
-        when: 'Add a department'
+        when: answers => answers.action === 'Add a department'
     }
 ];
 
