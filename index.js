@@ -1,6 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
-const { viewDepartments, viewRoles, viewEmployees } = require('./scripts/actions');
+// const { viewDepartments, viewRoles, viewEmployees } = require('./scripts/actions');
 const actionChoices = require('./scripts/Prompts');
 const cTable = require('console.table');
 
@@ -14,7 +14,8 @@ const db = mysql.createConnection(
     console.log(`Connected to database.`)
 );
 
-inquirer
+function startPrompt() {
+    inquirer
     .prompt(actionChoices)
     .then(answers => {
         switch (answers.action) {
@@ -36,12 +37,45 @@ inquirer
             case 'Update an employee role':
                 break;
         }
-    })
-    .catch(error => {
-        if (error) {
-            throw error;
+    });
+}
+
+const viewDepartments = () => {
+    db.query('SELECT * FROM departments', function(err, results){
+        if(err){
+            throw err;
         } else {
-            console.log('success');
+            console.table(results);
+            startPrompt();
         }
-    })
+    });
+};
+
+const viewRoles = () => {
+    db.query('SELECT * FROM roles', function(err, results){
+        if(err){
+            throw err;
+        } else {
+            console.table(results);
+            startPrompt();
+        }
+    });
+};
+
+const viewEmployees = () => {
+    db.query('SELECT * FROM employees', function(err, results){
+        if(err){
+            throw err;
+        } else {
+            console.table(results);
+            startPrompt();
+        }
+    });
+};
+
+
+
+startPrompt();
+
+
 
