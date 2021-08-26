@@ -62,6 +62,19 @@ const addDepartment = (value) => {
     });
 };
 
+const addRole = (title,salary,department) => {
+    const post  = {title: `${title}`, salary: salary, department_id: department};
+        db.query("INSERT INTO roles SET ?", post, function (err, results) {
+        if (err) {
+            throw err;
+        } else {
+            console.log(`Successfully added role.\n`);
+            db.query("SELECT * FROM roles", function (err, results) {
+                console.table(results);
+            });
+        }
+    });
+};
 
 
 const startPrompt = async () => {
@@ -78,9 +91,10 @@ const startPrompt = async () => {
             viewEmployees();
             break;
         case 'Add a department':
-            addDepartment(answers.departmentName)
+            addDepartment(userChoice.departmentName);
             break;
         case 'Add a role':
+            addRole(userChoice.roleTitle, userChoice.roleSalary, userChoice.roleDepartment);
             break;
         case 'Add an employee':
             break;

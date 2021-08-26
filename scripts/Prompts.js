@@ -1,3 +1,4 @@
+
 const actionChoices = [
     {
         type: 'list',
@@ -12,6 +13,24 @@ const actionChoices = [
         name: 'departmentName',
         message: 'What is the name of the department?',
         when: answers => answers.action === 'Add a department'
+    },
+    {
+        type: 'input',
+        name: 'roleTitle',
+        message: "What is the title of the role you'd like to add?",
+        when: answers => answers.action === 'Add a role'
+    },
+    {
+        type: 'input',
+        name: 'roleSalary',
+        message: 'What is the salary for the role you would like to add?',
+        when: answers => answers.action === 'Add a role'
+    },
+    {
+        type: 'input', 
+        name: 'roleDepartment',
+        message: 'What is the department id for this role?',
+        when: answers => answers.action === 'Add a role'
     }
 ];
 
