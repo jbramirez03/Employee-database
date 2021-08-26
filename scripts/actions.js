@@ -77,8 +77,18 @@ const addRole = (title, salary, department) => {
     });
 };
 
-const addEmployee = (firstName, lastName, roleId, managerId) => {
-
+const addEmployee = (firstName, lastName, role, manager) => {
+    const post = {first_name: `${firstName}`, last_name: `${lastName}`, role_id: role, manager_id: manager};
+    db.query('INSERT INTO employees SET ?', post, function(err, results){
+        if(err){
+            throw err
+        } else {
+            console.log('Successfully added employee');
+            db.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary, CONCAT(e.first_name, ' ' ,e.last_name) AS manager FROM employees INNER JOIN roles on roles.id = employees.role_id INNER JOIN departments on departments.id = roles.department_id left join employees e on employees.manager_id = e.id;", function(err,results){
+                console.table(results);
+            });
+        }
+    });
 };
 
 const startPrompt = async () => {
@@ -101,6 +111,7 @@ const startPrompt = async () => {
             addRole(userChoice.roleTitle, userChoice.roleSalary, userChoice.roleDepartment);
             break;
         case 'Add an employee':
+            addEmployee();
             break;
         case 'Update an employee role':
             break;
