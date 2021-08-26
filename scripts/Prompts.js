@@ -31,6 +31,30 @@ const actionChoices = [
         name: 'roleDepartment',
         message: 'What is the department id of this role?',
         when: answers => answers.action === 'Add a role'
+    },
+    {
+        type: 'input',
+        name: 'employeeFName',
+        message: 'What is the first name of the employee?',
+        when: answers => answers.action === 'Add an employee'
+    },
+    {
+        type: 'input',
+        name: 'employeeLName',
+        message: 'What is the last name of the employee?',
+        when: answers => answers.action === 'Add an employee'
+    },
+    {
+        type: 'input',
+        name: 'employeeRole',
+        message: 'What is the role id for this employee?',
+        when: answers => answers.action === 'Add an employee'
+    },
+    {
+        type: 'input',
+        name: 'employeeManagement',
+        message: 'Who is the manager of this employee?',
+        when: answers => answers.action === 'Add an employee'
     }
 ];
 

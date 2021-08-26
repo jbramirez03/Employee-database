@@ -111,7 +111,7 @@ const startPrompt = async () => {
             addRole(userChoice.roleTitle, userChoice.roleSalary, userChoice.roleDepartment);
             break;
         case 'Add an employee':
-            addEmployee();
+            addEmployee(userChoice.employeeFName, userChoice.employeeLName, userChoice.employeeRole, userChoice.employeeManagement);
             break;
         case 'Update an employee role':
             break;
