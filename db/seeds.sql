@@ -32,8 +32,8 @@ VALUES
     ("Rob", "Stuart", 3, 2),
     ("Tracey", "Jones", 4, 2),
     ("Tom", "Fort", 5, 1),
-    ("Alex", "Gonzolez", 6, 5),
+    ("Alicia", "Ramirez", 6, 5),
     ("Janice", "McName", 7, 1),
-    ("Billiam", "Gregston", 8, 7),
+    ("Rich", "Donald", 8, 7),
     ("Dan", "Algur", 9, 1),
-    ("Blanch", "Bluma", 11, 1);
+    ("Blanca", "Denise", 11, 1);

@@ -77,6 +77,9 @@ const addRole = (title, salary, department) => {
     });
 };
 
+const addEmployee = (firstName, lastName, roleId, managerId) => {
+
+};
 
 const startPrompt = async () => {
     const userChoice = await inquirer.prompt(actionChoices);
