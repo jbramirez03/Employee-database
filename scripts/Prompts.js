@@ -29,7 +29,7 @@ const actionChoices = [
     {
         type: 'input', 
         name: 'roleDepartment',
-        message: 'What is the department id for this role?',
+        message: 'What is the department id of this role?',
         when: answers => answers.action === 'Add a role'
     }
 ];

@@ -14,10 +14,9 @@ const db = mysql.createConnection(
     console.log(`Connected to database.`)
 );
 
-
 const viewDepartments = () => {
     db.query('SELECT * FROM departments', function (err, results) {
-        if (err) { 
+        if (err) {
             throw err;
         } else {
             console.table(results);
@@ -38,7 +37,7 @@ const viewRoles = () => {
 };
 
 const viewEmployees = () => {
-    db.query('SELECT * FROM employees', function (err, results) {
+    db.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary, CONCAT(e.first_name, ' ' ,e.last_name) AS manager FROM employees INNER JOIN roles on roles.id = employees.role_id INNER JOIN departments on departments.id = roles.department_id left join employees e on employees.manager_id = e.id;", function (err, results) {
         if (err) {
             throw err;
         } else {
@@ -58,13 +57,14 @@ const addDepartment = (value) => {
             db.query("SELECT * FROM departments", function (err, results) {
                 console.table(results);
             });
+            startPrompt();
         }
     });
 };
 
-const addRole = (title,salary,department) => {
-    const post  = {title: `${title}`, salary: salary, department_id: department};
-        db.query("INSERT INTO roles SET ?", post, function (err, results) {
+const addRole = (title, salary, department) => {
+    const post = { title: `${title}`, salary: salary, department_id: department };
+    db.query("INSERT INTO roles SET ?", post, function (err, results) {
         if (err) {
             throw err;
         } else {
@@ -72,6 +72,7 @@ const addRole = (title,salary,department) => {
             db.query("SELECT * FROM roles", function (err, results) {
                 console.table(results);
             });
+            startPrompt();
         }
     });
 };
