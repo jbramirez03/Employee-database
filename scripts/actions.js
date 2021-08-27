@@ -1,7 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
-const actionChoices = require('./Prompts');
+// const actionChoices = require('./Prompts');
 
 
 const db = mysql.createConnection(
@@ -53,11 +53,11 @@ const addDepartment = (value) => {
         if (err) {
             throw err;
         } else {
-            console.log(`Successfully added department.\n`);
             db.query("SELECT * FROM departments", function (err, results) {
                 console.table(results);
+                console.log(`Successfully added department.\n`);
+                startPrompt();
             });
-            startPrompt();
         }
     });
 };
@@ -68,11 +68,11 @@ const addRole = (title, salary, department) => {
         if (err) {
             throw err;
         } else {
-            console.log(`Successfully added role.\n`);
             db.query("SELECT * FROM roles", function (err, results) {
                 console.table(results);
+                console.log(`Successfully added role.\n`);
+                startPrompt();
             });
-            startPrompt();
         }
     });
 };
@@ -83,9 +83,11 @@ const addEmployee = (firstName, lastName, role, manager) => {
         if(err){
             throw err
         } else {
-            console.log('Successfully added employee');
+            console.log(`Successfully added employee\n`);
             db.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary, CONCAT(e.first_name, ' ' ,e.last_name) AS manager FROM employees INNER JOIN roles on roles.id = employees.role_id INNER JOIN departments on departments.id = roles.department_id left join employees e on employees.manager_id = e.id;", function(err,results){
                 console.table(results);
+                console.log(`Successfully added an employee\n`);
+                startPrompt();
             });
         }
     });
@@ -120,4 +122,64 @@ const startPrompt = async () => {
 
 }
 
-module.exports = startPrompt;
+const actionChoices = [
+    {
+        type: 'list',
+        name: 'action',
+        message: 'What action would you like to take with the database?',
+        default: '',
+        choices: ["View all departments", "View all roles", "View all employees", "Add a department",
+         "Add a role", "Add an employee", "Update an employee role"]
+    },
+    {
+        type: 'input',
+        name: 'departmentName',
+        message: 'What is the name of the department?',
+        when: answers => answers.action === 'Add a department'
+    },
+    {
+        type: 'input',
+        name: 'roleTitle',
+        message: "What is the title of the role you'd like to add?",
+        when: answers => answers.action === 'Add a role'
+    },
+    {
+        type: 'input',
+        name: 'roleSalary',
+        message: 'What is the salary for the role you would like to add?',
+        when: answers => answers.action === 'Add a role'
+    },
+    {
+        type: 'input', 
+        name: 'roleDepartment',
+        message: 'What is the department id of this role?',
+        when: answers => answers.action === 'Add a role'
+    },
+    {
+        type: 'input',
+        name: 'employeeFName',
+        message: 'What is the first name of the employee?',
+        when: answers => answers.action === 'Add an employee'
+    },
+    {
+        type: 'input',
+        name: 'employeeLName',
+        message: 'What is the last name of the employee?',
+        when: answers => answers.action === 'Add an employee'
+    },
+    {
+        type: 'input',
+        name: 'employeeRole',
+        message: 'What is the role id for this employee?',
+        when: answers => answers.action === 'Add an employee'
+    },
+    {
+        type: 'input',
+        name: 'employeeManagement',
+        message: 'Who is the manager of this employee?',
+        when: answers => answers.action === 'Add an employee'
+    }
+];
+
+module.exports =startPrompt;
+
