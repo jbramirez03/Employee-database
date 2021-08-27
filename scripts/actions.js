@@ -1,7 +1,6 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
-// const actionChoices = require('./Prompts');
 
 
 const db = mysql.createConnection(
@@ -106,7 +105,7 @@ const addRole = async () => {
 
     const departmentSelected = departmentsArray.indexOf(roleCreated.roleDepartment) + 1;
 
-    const post = { title: `${roleCreated.roleTitle}`, salary: roleCreated.roleSalary, department_id: departmentSelected};
+    const post = { title: `${roleCreated.roleTitle}`, salary: roleCreated.roleSalary, department_id: departmentSelected };
     db.query("INSERT INTO roles SET ?", post, function (err, results) {
         if (err) {
             throw err;
@@ -188,6 +187,9 @@ const addEmployee = async () => {
     });
 };
 
+const updateEmployeeRole = () => {
+
+};
 
 const startPrompt = async () => {
 
