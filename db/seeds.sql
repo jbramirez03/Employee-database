@@ -28,12 +28,12 @@ DELETE FROM employees;
 INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES
     ("Jason", "Barrera", 1, NULL),
-	("Axel", "Johson", 2, 1),
+	("Axel", "Johson", 2, NULL),
     ("Rob", "Stuart", 3, 2),
     ("Tracey", "Jones", 4, 2),
-    ("Tom", "Fort", 5, 1),
-    ("Alicia", "Ramirez", 6, 5),
-    ("Janice", "McName", 7, 1),
-    ("Rich", "Donald", 8, 7),
-    ("Dan", "Algur", 9, 1),
-    ("Blanca", "Denise", 11, 1);
+    ("Tom", "Fort", 5, NULL),
+    ("Alex", "Gonzolez", 6, 5),
+    ("Janice", "McName", 7, NULL),
+    ("Billiam", "Gregston", 8, 7),
+    ("Dan", "Algur", 9, NULL),
+    ("Blanch", "Bluma", 11, NULL);

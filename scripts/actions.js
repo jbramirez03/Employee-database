@@ -14,6 +14,27 @@ const db = mysql.createConnection(
     console.log(`Connected to database.`)
 );
 
+let rolesArray = [];
+let managersArray = [];
+db.query("SELECT * FROM roles", (err, results) => {
+    if (err) {
+      console.log(err);
+    }
+    return results.map(role => rolesArray.push(`${role.title}`));
+  });
+
+  db.query(
+    "SELECT first_name, last_name FROM employees WHERE manager_id IS NULL",
+    (err, results) => {
+      if (err) {
+        console.log(err);
+      }
+
+      results.map(manager => {
+        return managersArray.push(`${manager.first_name} ${manager.last_name}`);
+      });
+    }
+  );
 const viewDepartments = () => {
     db.query('SELECT * FROM departments', function (err, results) {
         if (err) {
@@ -78,6 +99,7 @@ const addRole = (title, salary, department) => {
 };
 
 const addEmployee = (firstName, lastName, role, manager) => {
+    
     const post = {first_name: `${firstName}`, last_name: `${lastName}`, role_id: role, manager_id: manager};
     db.query('INSERT INTO employees SET ?', post, function(err, results){
         if(err){
@@ -92,6 +114,7 @@ const addEmployee = (firstName, lastName, role, manager) => {
         }
     });
 };
+
 
 const startPrompt = async () => {
     const userChoice = await inquirer.prompt(actionChoices);
@@ -113,7 +136,7 @@ const startPrompt = async () => {
             addRole(userChoice.roleTitle, userChoice.roleSalary, userChoice.roleDepartment);
             break;
         case 'Add an employee':
-            addEmployee(userChoice.employeeFName, userChoice.employeeLName, userChoice.employeeRole, userChoice.employeeManagement);
+            addEmployee(userChoice.employeeFName, userChoice.employeeLName, rolesArray.indexOf(userChoice.employeeRole) + 1, managersArray.indexOf(userChoice.employeeManagement) + 1);
             break;
         case 'Update an employee role':
             break;
@@ -168,15 +191,17 @@ const actionChoices = [
         when: answers => answers.action === 'Add an employee'
     },
     {
-        type: 'input',
+        type: 'list',
         name: 'employeeRole',
         message: 'What is the role id for this employee?',
+        choices: rolesArray,
         when: answers => answers.action === 'Add an employee'
     },
     {
-        type: 'input',
+        type: 'list',
         name: 'employeeManagement',
         message: 'Who is the manager of this employee?',
+        choices: managersArray,
         when: answers => answers.action === 'Add an employee'
     }
 ];
