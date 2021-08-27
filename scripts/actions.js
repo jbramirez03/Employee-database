@@ -16,25 +16,15 @@ const db = mysql.createConnection(
 
 let rolesArray = [];
 let managersArray = [];
+let departmentsArray = [];
+
 db.query("SELECT * FROM roles", (err, results) => {
     if (err) {
-      console.log(err);
+        console.log(err);
     }
     return results.map(role => rolesArray.push(`${role.title}`));
-  });
+});
 
-  db.query(
-    "SELECT first_name, last_name FROM employees WHERE manager_id IS NULL",
-    (err, results) => {
-      if (err) {
-        console.log(err);
-      }
-
-      results.map(manager => {
-        return managersArray.push(`${manager.first_name} ${manager.last_name}`);
-      });
-    }
-  );
 const viewDepartments = () => {
     db.query('SELECT * FROM departments', function (err, results) {
         if (err) {
@@ -68,9 +58,17 @@ const viewEmployees = () => {
     });
 };
 
-const addDepartment = (value) => {
+const addDepartment = async () => {
 
-    db.query("INSERT INTO departments (name) VALUES (?)", value, function (err, results) {
+    const departmentCreated = await inquirer.prompt([
+        {
+            type: 'input',
+            name: 'depName',
+            message: 'What is the name of the new department?'
+        }
+    ]);
+
+    db.query(`INSERT INTO departments (name) VALUES ("${departmentCreated.depName}")`, function (err, results) {
         if (err) {
             throw err;
         } else {
@@ -83,8 +81,41 @@ const addDepartment = (value) => {
     });
 };
 
-const addRole = (title, salary, department) => {
-    const post = { title: `${title}`, salary: salary, department_id: department };
+const addRole = async () => {
+    let departmentsArray = [];
+
+    db.query('SELECT name From departments', function (err, results) {
+        if (err) {
+            throw err;
+        } else {
+            results.map(department => {
+                return departmentsArray.push(`${department.name}`);
+            });
+        }
+    });
+
+    const roleCreated = await inquirer.prompt([
+        {
+            type: 'input',
+            name: 'roleTitle',
+            message: "What is the title of the role you'd like to add?",
+        },
+        {
+            type: 'input',
+            name: 'roleSalary',
+            message: 'What is the salary for the role you would like to add?',
+        },
+        {
+            type: 'list',
+            name: 'roleDepartment',
+            message: 'What department does this role belong to?',
+            choices: departmentsArray,
+        }
+    ]);
+
+    const departmentSelected = departmentsArray.indexOf(roleCreated.roleDepartment) + 1;
+
+    const post = { title: `${roleCreated.roleTitle}`, salary: roleCreated.roleSalary, department_id: departmentSelected};
     db.query("INSERT INTO roles SET ?", post, function (err, results) {
         if (err) {
             throw err;
@@ -99,14 +130,28 @@ const addRole = (title, salary, department) => {
 };
 
 const addEmployee = (firstName, lastName, role, manager) => {
-    
-    const post = {first_name: `${firstName}`, last_name: `${lastName}`, role_id: role, manager_id: manager};
-    db.query('INSERT INTO employees SET ?', post, function(err, results){
-        if(err){
+
+    db.query(
+        "SELECT first_name, last_name FROM employees WHERE manager_id IS NULL",
+        (err, results) => {
+            if (err) {
+                console.log(err);
+            }
+
+            results.map(manager => {
+                return managersArray.push(`${manager.first_name} ${manager.last_name}`);
+            });
+        }
+    );
+
+
+    const post = { first_name: `${firstName}`, last_name: `${lastName}`, role_id: role, manager_id: manager };
+    db.query('INSERT INTO employees SET ?', post, function (err, results) {
+        if (err) {
             throw err
         } else {
             console.log(`Successfully added employee\n`);
-            db.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary, CONCAT(e.first_name, ' ' ,e.last_name) AS manager FROM employees INNER JOIN roles on roles.id = employees.role_id INNER JOIN departments on departments.id = roles.department_id left join employees e on employees.manager_id = e.id;", function(err,results){
+            db.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary, CONCAT(e.first_name, ' ' ,e.last_name) AS manager FROM employees INNER JOIN roles on roles.id = employees.role_id INNER JOIN departments on departments.id = roles.department_id left join employees e on employees.manager_id = e.id;", function (err, results) {
                 console.table(results);
                 console.log(`Successfully added an employee\n`);
                 startPrompt();
@@ -117,6 +162,7 @@ const addEmployee = (firstName, lastName, role, manager) => {
 
 
 const startPrompt = async () => {
+
     const userChoice = await inquirer.prompt(actionChoices);
 
     switch (userChoice.action) {
@@ -130,13 +176,13 @@ const startPrompt = async () => {
             viewEmployees();
             break;
         case 'Add a department':
-            addDepartment(userChoice.departmentName);
+            addDepartment();
             break;
         case 'Add a role':
-            addRole(userChoice.roleTitle, userChoice.roleSalary, userChoice.roleDepartment);
+            addRole();
             break;
         case 'Add an employee':
-            addEmployee(userChoice.employeeFName, userChoice.employeeLName, rolesArray.indexOf(userChoice.employeeRole) + 1, managersArray.indexOf(userChoice.employeeManagement) + 1);
+
             break;
         case 'Update an employee role':
             break;
@@ -152,31 +198,7 @@ const actionChoices = [
         message: 'What action would you like to take with the database?',
         default: '',
         choices: ["View all departments", "View all roles", "View all employees", "Add a department",
-         "Add a role", "Add an employee", "Update an employee role"]
-    },
-    {
-        type: 'input',
-        name: 'departmentName',
-        message: 'What is the name of the department?',
-        when: answers => answers.action === 'Add a department'
-    },
-    {
-        type: 'input',
-        name: 'roleTitle',
-        message: "What is the title of the role you'd like to add?",
-        when: answers => answers.action === 'Add a role'
-    },
-    {
-        type: 'input',
-        name: 'roleSalary',
-        message: 'What is the salary for the role you would like to add?',
-        when: answers => answers.action === 'Add a role'
-    },
-    {
-        type: 'input', 
-        name: 'roleDepartment',
-        message: 'What is the department id of this role?',
-        when: answers => answers.action === 'Add a role'
+            "Add a role", "Add an employee", "Update an employee role"]
     },
     {
         type: 'input',
@@ -206,5 +228,5 @@ const actionChoices = [
     }
 ];
 
-module.exports =startPrompt;
+module.exports = startPrompt;
 
