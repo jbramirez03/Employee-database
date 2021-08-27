@@ -14,16 +14,7 @@ const db = mysql.createConnection(
     console.log(`Connected to database.`)
 );
 
-let rolesArray = [];
-let managersArray = [];
-let departmentsArray = [];
 
-db.query("SELECT * FROM roles", (err, results) => {
-    if (err) {
-        console.log(err);
-    }
-    return results.map(role => rolesArray.push(`${role.title}`));
-});
 
 const viewDepartments = () => {
     db.query('SELECT * FROM departments', function (err, results) {
@@ -129,7 +120,10 @@ const addRole = async () => {
     });
 };
 
-const addEmployee = (firstName, lastName, role, manager) => {
+const addEmployee = async () => {
+
+    let managersArray = [];
+    let rolesArray = [];
 
     db.query(
         "SELECT first_name, last_name FROM employees WHERE manager_id IS NULL",
@@ -144,8 +138,42 @@ const addEmployee = (firstName, lastName, role, manager) => {
         }
     );
 
+    db.query("SELECT * FROM roles", (err, results) => {
+        if (err) {
+            console.log(err);
+        }
+        return results.map(role => rolesArray.push(`${role.title}`));
+    });
 
-    const post = { first_name: `${firstName}`, last_name: `${lastName}`, role_id: role, manager_id: manager };
+    const employeeCreated = await inquirer.prompt([
+        {
+            type: 'input',
+            name: 'employeeFName',
+            message: 'What is the first name of the employee?',
+        },
+        {
+            type: 'input',
+            name: 'employeeLName',
+            message: 'What is the last name of the employee?',
+        },
+        {
+            type: 'list',
+            name: 'employeeRole',
+            message: 'What is the role id for this employee?',
+            choices: rolesArray,
+        },
+        {
+            type: 'list',
+            name: 'employeeManagement',
+            message: 'Who is the manager of this employee?',
+            choices: managersArray,
+        }
+    ]);
+
+    const selectedRole = rolesArray.indexOf(employeeCreated.employeeRole) + 1;
+    const selectedManager = managersArray.indexOf(employeeCreated.employeeManagement) + 1;
+
+    const post = { first_name: `${employeeCreated.employeeFName}`, last_name: `${employeeCreated.employeeLName}`, role_id: selectedRole, manager_id: selectedManager };
     db.query('INSERT INTO employees SET ?', post, function (err, results) {
         if (err) {
             throw err
@@ -182,7 +210,7 @@ const startPrompt = async () => {
             addRole();
             break;
         case 'Add an employee':
-
+            addEmployee();
             break;
         case 'Update an employee role':
             break;
@@ -199,32 +227,6 @@ const actionChoices = [
         default: '',
         choices: ["View all departments", "View all roles", "View all employees", "Add a department",
             "Add a role", "Add an employee", "Update an employee role"]
-    },
-    {
-        type: 'input',
-        name: 'employeeFName',
-        message: 'What is the first name of the employee?',
-        when: answers => answers.action === 'Add an employee'
-    },
-    {
-        type: 'input',
-        name: 'employeeLName',
-        message: 'What is the last name of the employee?',
-        when: answers => answers.action === 'Add an employee'
-    },
-    {
-        type: 'list',
-        name: 'employeeRole',
-        message: 'What is the role id for this employee?',
-        choices: rolesArray,
-        when: answers => answers.action === 'Add an employee'
-    },
-    {
-        type: 'list',
-        name: 'employeeManagement',
-        message: 'Who is the manager of this employee?',
-        choices: managersArray,
-        when: answers => answers.action === 'Add an employee'
     }
 ];
 
