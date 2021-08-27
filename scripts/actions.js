@@ -187,19 +187,19 @@ const addEmployee = async () => {
     });
 };
 
-const updateEmployeeRole = () => {
+const updateEmployeeRole = async () => {
     let employeesArray = [];
     let rolesArray = [];
 
     db.query(
-        "SELECT first_name, last_name FROM employees",
+        "SELECT first_name FROM employees",
         (err, results) => {
             if (err) {
                 console.log(err);
             }
 
             results.map(employee => {
-                return employeesArray.push(`${employee.first_name} ${employee.last_name}`);
+                return employeesArray.push(`${employee.first_name}`);
             });
         }
     );
@@ -210,6 +210,26 @@ const updateEmployeeRole = () => {
         }
         return results.map(role => rolesArray.push(`${role.title}`));
     });
+
+    const updatedEmployee = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'employee',
+            message: "Which employee's role would you like to update?",
+            choices: employeesArray
+        },
+        {
+            type: 'input',
+            name: 'role',
+            message: 'What role would you like to assign to this employee?',
+            choices: rolesArray
+        }
+    ]);
+
+    const chosenEmployee = employeesArray.indexOf(updatedEmployee.employee) + 1;
+    const chosenRole = rolesArray.indexOf(updatedEmployee.role) + 1;
+
+    const post = {};
 };
 
 const startPrompt = async () => {
