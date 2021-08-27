@@ -188,7 +188,28 @@ const addEmployee = async () => {
 };
 
 const updateEmployeeRole = () => {
+    let employeesArray = [];
+    let rolesArray = [];
 
+    db.query(
+        "SELECT first_name, last_name FROM employees",
+        (err, results) => {
+            if (err) {
+                console.log(err);
+            }
+
+            results.map(employee => {
+                return employeesArray.push(`${employee.first_name} ${employee.last_name}`);
+            });
+        }
+    );
+
+    db.query("SELECT * FROM roles", (err, results) => {
+        if (err) {
+            console.log(err);
+        }
+        return results.map(role => rolesArray.push(`${role.title}`));
+    });
 };
 
 const startPrompt = async () => {
