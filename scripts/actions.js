@@ -83,7 +83,7 @@ const addRole = async () => {
         });
 
     });
-
+    
     const roleCreated = await inquirer.prompt([
         {
             type: 'input',
@@ -189,15 +189,55 @@ const addEmployee = async () => {
 
 
 const updateEmployee = async () => {
-    let employeesA = [];
+    let employeesArray = [];
+    let rolesArray = [];
 
-    db.query('SELECT first_name FROM employees', (err, results) => {
-        results.map(employee => {
-            return employeesA.push(`${employee.first_name}`);
+    db.query('SELECT first_name From employees', (err, results) => {
+        if (err) {
+            throw err;
+        }
+        results.map(department => {
+            return employeesArray.push(`${department.first_name}`);
         });
+
     });
 
-    console.log(employeesA);
+    db.query("SELECT * FROM roles", (err, results) => {
+        if (err) {
+            throw err
+        }
+        return results.map(role => rolesArray.push(`${role.title}`));
+    });
+    
+    const updatedEmployee = await inquirer.prompt([
+        {
+            type: 'input',
+            name: 'continue',
+            message: "Press any key to continue",
+        },
+        {
+            type: 'list',
+            name: 'employees',
+            message: 'What employee would you like to update?',
+            choices: employeesArray,
+        },
+        {
+            type: 'list',
+            name: 'roles',
+            message: 'What role would you like to assign to this employee?',
+            choices: rolesArray
+        }
+    ]);
+
+    const roleSelected = rolesArray.indexOf(updatedEmployee.roles) + 1;
+    const employeeSelected = employeesArray.indexOf(updatedEmployee.employees) + 1;
+
+    db.query(`UPDATE employees SET role_id = ${roleSelected} WHERE id = ${employeeSelected}`, (err, results) => {
+        if(err){
+            throw err
+        }
+        return console.log('Successfully updated employee role.');
+    });
 
 };
 
