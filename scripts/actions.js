@@ -234,13 +234,14 @@ const updateEmployee = async () => {
         if(err){
             throw err
         }
-        return console.log('Successfully updated employee role.');
+        console.log('Successfully updated employee role.');
+        return startPrompt();
     });
 
 };
 
-const deleteDepartment = async () => {
-
+const updateEmployeeManager = async () => {
+    
 };
 
 
@@ -270,8 +271,8 @@ const startPrompt = async () => {
         case 'Update an employee role':
             updateEmployee();
             break;
-        case 'Delete a department':
-            deleteDepartment();
+        case 'Update employee manager':
+            updateEmployeeManager();
             break;
     }
 
@@ -285,7 +286,7 @@ const actionChoices = [
         message: 'What action would you like to take with the database?',
         default: '',
         choices: ["View all departments", "View all roles", "View all employees", "Add a department",
-            "Add a role", "Add an employee", "Update an employee role"]
+            "Add a role", "Add an employee", "Update an employee role", "Update employee manager"]
     }
 ];
 
