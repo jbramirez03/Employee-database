@@ -14,6 +14,13 @@ const db = mysql.createConnection(
     console.log(`Connected to database.`)
 );
 
+const connectElements = {
+    host: 'localhost',
+    user: 'root',
+    password: 'newpassword',
+    database: 'employees_db'
+}
+
 
 
 const viewDepartments = () => {
@@ -189,67 +196,46 @@ const addEmployee = async () => {
 };
 
 
-const updateEmployee = () => {
+const updateEmployee = async () => {
     let employeesArray = [];
     let rolesArray = [];
 
-    db.query('SELECT first_name, last_name From employees', (err, results) => {
-        if (err) {
-            throw err;
+    const connection = await mysqlPromise.createConnection(connectElements);
+
+    const [employees] = await connection.execute('SELECT first_name, last_name FROM employees');
+    employees.map(employee => employeesArray.push(`${employee.first_name} ${employee.last_name}`));
+
+    const [roles] = await connection.execute('SELECT title FROM roles');
+    roles.map(role => rolesArray.push(role.title));
+
+    const employeeToUpdate = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'employees',
+            message: 'What employee would you like to update?',
+            choices: employeesArray
+        },
+        {
+            type: 'list',
+            name: 'roles',
+            message: 'What role would you like to assign to this employee?',
+            choices: rolesArray
         }
+    ]);
 
-        results.map(employee => employeesArray.push(`${employee.first_name} ${employee.last_name}`));
-
-        return db.query("SELECT * FROM roles", (err, results) => {
-            if (err) {
-                throw err
-            }
-            results.map(role => rolesArray.push(`${role.title}`));
-
-            inquirer
-                .prompt([
-                    {
-                        type: 'list',
-                        name: 'employees',
-                        message: 'What employee would you like to update?',
-                        choices: employeesArray,
-                    },
-                    {
-                        type: 'list',
-                        name: 'roles',
-                        message: 'What role would you like to assign to this employee?',
-                        choices: rolesArray
-                    }
-                ])
-                .then(answers => {
-                    const roleSelected = rolesArray.indexOf(answers.roles) + 1;
-                    const employeeSelected = employeesArray.indexOf(answers.employees) + 1;
-
-                    db.query(`UPDATE employees SET role_id = ${roleSelected} WHERE id = ${employeeSelected}`, (err, results) => {
-                        if (err) {
-                            throw err
-                        }
-                        console.log('Successfully updated employee role.');
-                        return startPrompt();
-                    });
-                });
-
-        });
-
-
-    });
+    const selectedEmployee = employeesArray.indexOf(employeeToUpdate.employees) + 1;
+    const selectedRole = rolesArray.indexOf(employeeToUpdate.roles) + 1;
+    const [employeeUpdated] = await connection.execute(`UPDATE employees SET role_id = ${selectedRole} WHERE id = ${selectedEmployee}`);
+    console.log(`\nSuccessfully updated ${employeesArray[selectedEmployee - 1]}'s role\n`);
+    startPrompt();
 };
 
 const viewByManagers = async () => {
     let managersArray = [];
-    const connection = await mysqlPromise.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: 'newpassword',
-        database: 'employees_db'
-    });
 
-    const [rows,fields] = await connection.execute('SELECT * FROM employees WHERE manager_id IS NULL');
+    const connection = await mysqlPromise.createConnection(connectElements);
+
+    const [rows, fields] = await connection.execute('SELECT * FROM employees WHERE manager_id IS NULL');
 
     rows.map(employee => managersArray.push(employee.first_name));
 
@@ -267,7 +253,7 @@ const viewByManagers = async () => {
     const [employees] = await connection.execute(`SELECT * FROM employees WHERE manager_id = ${selectedManager[0].id}`);
 
     console.table(employees);
-    
+
     startPrompt();
 
 }
