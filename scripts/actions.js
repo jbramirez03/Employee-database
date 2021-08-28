@@ -128,29 +128,16 @@ const addRole = async () => {
 };
 
 const addEmployee = async () => {
-
     let managersArray = [];
     let rolesArray = [];
 
-    db.query(
-        "SELECT first_name, last_name FROM employees WHERE manager_id IS NULL",
-        (err, results) => {
-            if (err) {
-                throw err
-            }
+    const connection = await mysqlPromise.createConnection(connectElements);
 
-            results.map(manager => {
-                return managersArray.push(`${manager.first_name} ${manager.last_name}`);
-            });
-        }
-    );
+    const [managers] = await connection.execute("SELECT first_name, last_name FROM employees WHERE manager_id IS NULL")
+    const [roles] = await connection.execute("SELECT * FROM roles");
 
-    db.query("SELECT * FROM roles", (err, results) => {
-        if (err) {
-            throw err
-        }
-        return results.map(role => rolesArray.push(`${role.title}`));
-    });
+    managers.map(manager => managersArray.push(`${manager.first_name} ${manager.last_name}`));
+    roles.map(role => rolesArray.push(role.title));
 
     const employeeCreated = await inquirer.prompt([
         {
@@ -181,18 +168,10 @@ const addEmployee = async () => {
     const selectedManager = managersArray.indexOf(employeeCreated.employeeManagement) + 1;
 
     const post = { first_name: `${employeeCreated.employeeFName}`, last_name: `${employeeCreated.employeeLName}`, role_id: selectedRole, manager_id: selectedManager };
-    db.query('INSERT INTO employees SET ?', post, function (err, results) {
-        if (err) {
-            throw err
-        } else {
-            console.log(`Successfully added employee\n`);
-            db.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary, CONCAT(e.first_name, ' ' ,e.last_name) AS manager FROM employees INNER JOIN roles on roles.id = employees.role_id INNER JOIN departments on departments.id = roles.department_id left join employees e on employees.manager_id = e.id;", function (err, results) {
-                console.table(results);
-                console.log(`Successfully added an employee\n`);
-                startPrompt();
-            });
-        }
-    });
+    const [addEmployee] = await connection.query('INSERT INTO employees SET ?', post);
+
+    console.log(`\nSuccessfully added ${employeeCreated.employeeFName} ${employeeCreated.employeeLName} to database\n`);
+    startPrompt();
 };
 
 
