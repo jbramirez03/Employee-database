@@ -196,10 +196,8 @@ const updateEmployee = async () => {
         if (err) {
             throw err;
         }
-        results.map(department => {
-            return employeesArray.push(`${department.first_name}`);
-        });
-
+        
+        return results.map(employee => employeesArray.push(employee.first_name));
     });
 
     db.query("SELECT * FROM roles", (err, results) => {
@@ -241,6 +239,10 @@ const updateEmployee = async () => {
 
 };
 
+const deleteDepartment = async () => {
+
+};
+
 
 const startPrompt = async () => {
 
@@ -267,6 +269,9 @@ const startPrompt = async () => {
             break;
         case 'Update an employee role':
             updateEmployee();
+            break;
+        case 'Delete a department':
+            deleteDepartment();
             break;
     }
 
