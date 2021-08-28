@@ -43,4 +43,4 @@ UPDATE employees
 SET role_id = 2
 WHERE first_name = "Jason" AND last_name = "Barrera";
 
-SELECT first_name FROM employees
+SELECT first_name FROM employees;
