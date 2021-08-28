@@ -82,15 +82,10 @@ const addDepartment = async () => {
 const addRole = async () => {
     let departmentsArray = [];
 
-    db.query('SELECT name From departments', (err, results) => {
-        if (err) {
-            throw err;
-        }
-        results.map(department => {
-            return departmentsArray.push(`${department.name}`);
-        });
+    const connection = await mysqlPromise.createConnection(connectElements);
 
-    });
+    const [departments] = await connection.execute('SELECT name From departments');
+    departments.map(department => departmentsArray.push(department.name));
 
     const roleCreated = await inquirer.prompt([
         {
@@ -114,17 +109,8 @@ const addRole = async () => {
     const departmentSelected = departmentsArray.indexOf(roleCreated.roleDepartment) + 1;
 
     const post = { title: `${roleCreated.roleTitle}`, salary: roleCreated.roleSalary, department_id: departmentSelected };
-    db.query("INSERT INTO roles SET ?", post, (err, results) => {
-        if (err) {
-            throw err;
-        } else {
-            db.query("SELECT * FROM roles", (err, results) => {
-                console.table(results);
-                console.log(`Successfully added role.\n`);
-                startPrompt();
-            });
-        }
-    });
+    const [roleAdded] = await connection.query("INSERT INTO roles SET ?", post);
+    console.log(`\n Successfully added role\n`);
 };
 
 const addEmployee = async () => {
@@ -204,7 +190,9 @@ const updateEmployee = async () => {
 
     const selectedEmployee = employeesArray.indexOf(employeeToUpdate.employees) + 1;
     const selectedRole = rolesArray.indexOf(employeeToUpdate.roles) + 1;
+
     const [employeeUpdated] = await connection.execute(`UPDATE employees SET role_id = ${selectedRole} WHERE id = ${selectedEmployee}`);
+
     console.log(`\nSuccessfully updated ${employeesArray[selectedEmployee - 1]}'s role\n`);
     startPrompt();
 };
@@ -228,7 +216,6 @@ const viewByManagers = async () => {
     ]);
 
     const [selectedManager] = await connection.execute(`SELECT id FROM employees WHERE first_name = "${employeesByManager.managers}"`);
-
     const [employees] = await connection.execute(`SELECT * FROM employees WHERE manager_id = ${selectedManager[0].id}`);
 
     console.table(employees);
