@@ -1,6 +1,7 @@
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
+const mysqlPromise = require('mysql2/promise');
 
 
 const db = mysql.createConnection(
@@ -192,12 +193,12 @@ const updateEmployee = () => {
     let employeesArray = [];
     let rolesArray = [];
 
-    db.query('SELECT first_name From employees', (err, results) => {
+    db.query('SELECT first_name, last_name From employees', (err, results) => {
         if (err) {
             throw err;
         }
 
-        results.map(employee => employeesArray.push(employee.first_name));
+        results.map(employee => employeesArray.push(`${employee.first_name} ${employee.last_name}`));
 
         return db.query("SELECT * FROM roles", (err, results) => {
             if (err) {
@@ -239,6 +240,38 @@ const updateEmployee = () => {
     });
 };
 
+const viewByManagers = async () => {
+    let managersArray = [];
+    const connection = await mysqlPromise.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: 'newpassword',
+        database: 'employees_db'
+    });
+
+    const [rows,fields] = await connection.execute('SELECT * FROM employees WHERE manager_id IS NULL');
+
+    rows.map(employee => managersArray.push(employee.first_name));
+
+    const employeesByManager = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'managers',
+            message: 'Who is the manager of the employees?',
+            choices: managersArray
+        }
+    ]);
+
+    const [selectedManager] = await connection.execute(`SELECT id FROM employees WHERE first_name = "${employeesByManager.managers}"`);
+
+    const [employees] = await connection.execute(`SELECT * FROM employees WHERE manager_id = ${selectedManager[0].id}`);
+
+    console.table(employees);
+    
+    startPrompt();
+
+}
+
 
 
 const startPrompt = async () => {
@@ -267,6 +300,9 @@ const startPrompt = async () => {
         case 'Update an employee role':
             updateEmployee();
             break;
+        case 'View employees by manager':
+            viewByManagers();
+            break;
     }
 
 
@@ -279,7 +315,7 @@ const actionChoices = [
         message: 'What action would you like to take with the database?',
         default: '',
         choices: ["View all departments", "View all roles", "View all employees", "Add a department",
-            "Add a role", "Add an employee", "Update an employee role", "Update employee manager"]
+            "Add a role", "Add an employee", "Update an employee role", "View employees by manager"]
     }
 ];
 
