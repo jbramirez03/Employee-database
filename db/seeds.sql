@@ -37,3 +37,10 @@ VALUES
     ("Billiam", "Gregston", 8, 7),
     ("Dan", "Algur", 9, NULL),
     ("Blanch", "Bluma", 11, NULL);
+
+
+UPDATE employees 
+SET role_id = 2
+WHERE first_name = "Jason" AND last_name = "Barrera";
+
+SELECT first_name FROM employees
