@@ -70,6 +70,7 @@ const addDepartment = async () => {
 
     const [insertedDepartment] = await connection.execute(`INSERT INTO departments (name) VALUES ("${departmentCreated.depName}")`);
     console.log(`\nSuccessfully added department.\n`);
+    startPrompt();
 };
 
 const addRole = async () => {
@@ -104,6 +105,7 @@ const addRole = async () => {
     const post = { title: `${roleCreated.roleTitle}`, salary: roleCreated.roleSalary, department_id: departmentSelected };
     const [roleAdded] = await connection.query("INSERT INTO roles SET ?", post);
     console.log(`\n Successfully added role\n`);
+    startPrompt();
 };
 
 const addEmployee = async () => {
