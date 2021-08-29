@@ -58,6 +58,8 @@ const viewEmployees = () => {
 
 const addDepartment = async () => {
 
+    const connection = await mysqlPromise.createConnection(connectElements);
+
     const departmentCreated = await inquirer.prompt([
         {
             type: 'input',
@@ -66,17 +68,8 @@ const addDepartment = async () => {
         }
     ]);
 
-    db.query(`INSERT INTO departments (name) VALUES ("${departmentCreated.depName}")`, (err, results) => {
-        if (err) {
-            throw err;
-        } else {
-            db.query("SELECT * FROM departments", (err, results) => {
-                console.table(results);
-                console.log(`Successfully added department.\n`);
-                startPrompt();
-            });
-        }
-    });
+    const [insertedDepartment] = await connection.execute(`INSERT INTO departments (name) VALUES ("${departmentCreated.depName}")`);
+    console.log(`\nSuccessfully added department.\n`);
 };
 
 const addRole = async () => {
