@@ -15,7 +15,6 @@
 - [Technologies](#technologies)
 - [Future development](#future-development)
 - [How to contribute](#how-to-contribute)
-- [Tests](#tests)
 - [Questions](#questions)
 - [Link](#link)
 ## Usage
