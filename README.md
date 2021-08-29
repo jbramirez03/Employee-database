@@ -29,6 +29,7 @@ This Project is covered by the [MIT] license
 The main challenge found when writing the logic for this project was the use of asynchronous functions and getting lines to run one after another. This problem was fixed through the use of the `mysql2/promise` wrapper in the mysql npm package. The challenge following closely behind was figuring out how to get the names of employees to appear in the inquirer prompts as a list of options. This was resolved through mapping the results of an sql call and pushing each individual employee name into an array in order to display as names in a list.
 ## Technologies
 <img align="left" width="26px" alt="Node.js" src="https://user-images.githubusercontent.com/82244776/131235189-bd5f5fc2-6802-4f79-b553-267a05f37ab3.png">
+<img aling="left" width="27px" alt="mysql" src="https://user-images.githubusercontent.com/82244776/131235260-c522d5d8-e58d-4bd9-82ec-a3cc3c119ccd.png">
 <img align="left" width="26px" alt="Javascript" src="https://user-images.githubusercontent.com/82244776/128645657-2dad4760-43e6-42a9-90a5-8f8b3f62b4a0.png"><br><br>
 
 ## Features
@@ -40,4 +41,4 @@ Fork the Repo and make a pull request for code to be reviewed and considered for
 ## Questions
 If there are any questions about the project get in contact with me at my [Email](mailto:jason1287712@gmail.com)
 ## Link 
-This is the link to the
+This is the link to the walkthrough [video](https://drive.google.com/file/d/1KBt4Mr4b7JSQbBMiE0LFq8v3_-r7ee9z/view?usp=sharing)
