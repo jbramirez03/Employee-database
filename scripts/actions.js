@@ -217,6 +217,28 @@ const viewByManagers = async () => {
 
 }
 
+const viewByDepartments = async () => {
+    const connection = await mysqlPromise.createConnection(connectElements);
+    let rolesArray = [];
+
+    const [roles] = await connection.execute('SELECT title FROM roles');
+    roles.map(role => rolesArray.push(role.title));
+
+    const roleToViewBy = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'role',
+            message: 'What role would you like to view employees by?',
+            choices: rolesArray
+        }
+    ]);
+
+    const roleSelected = rolesArray.indexOf(roleToViewBy.role) + 1;
+
+    const [employeesByRole] = await connection.execute(`SELECT * FROM employees WHERE role_id = ${roleSelected}`);
+
+    console.table(employeesByRole);
+};
 
 
 const startPrompt = async () => {
@@ -248,6 +270,9 @@ const startPrompt = async () => {
         case 'View employees by manager':
             viewByManagers();
             break;
+        case 'View employees by department':
+            viewByDepartments();
+            break;
     }
 
 
@@ -260,7 +285,7 @@ const actionChoices = [
         message: 'What action would you like to take with the database?',
         default: '',
         choices: ["View all departments", "View all roles", "View all employees", "Add a department",
-            "Add a role", "Add an employee", "Update an employee role", "View employees by manager"]
+            "Add a role", "Add an employee", "Update an employee role", "View employees by manager", "View employees by department"]
     }
 ];
 

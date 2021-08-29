@@ -44,3 +44,5 @@ SET role_id = 2
 WHERE first_name = "Jason" AND last_name = "Barrera";
 
 SELECT first_name FROM employees;
+
+SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary, CONCAT(e.first_name, ' ' ,e.last_name) AS manager FROM employees WHERE role_id = 1 INNER JOIN roles on roles.id = employees.role_id INNER JOIN departments on departments.id = roles.department_id left join employees e on employees.manager_id = e.id;
