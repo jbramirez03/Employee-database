@@ -20,6 +20,12 @@ This project focuses on the back-end of web development by using a database and 
 ## Usage
 In order to use the npm packages you must first run the command in the terminal `npm i` and all the dependencies in the package.json file will download. In order to begin running the prompts in the terminal you must run the line `node index.js`. Once the prompts appear,
 depending on the action you want to take different tables appear or more prompts display. If you would like to exit the prompts screen simply choose the option `Exit`.
+### Start Screen
+![Start](assets/Start-Screen.png)
+### View Employees
+![Employees](assets/View-Employees.png)
+### Exit
+![Exit](assets/Exit.png)
 ## Credits
 Jason Barrera-Ramirez<br><br>
 [<img align="left" width="28px" alt="LinkedIn" src="https://user-images.githubusercontent.com/82244776/128110957-497edff3-59dc-41d6-89bc-be7570e441fe.png" />][LinkedIn]<br><br>
