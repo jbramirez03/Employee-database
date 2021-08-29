@@ -238,6 +238,7 @@ const viewByDepartments = async () => {
     const [employeesByRole] = await connection.execute(`SELECT * FROM employees WHERE role_id = ${roleSelected}`);
 
     console.table(employeesByRole);
+    startPrompt();
 };
 
 
@@ -273,6 +274,10 @@ const startPrompt = async () => {
         case 'View employees by department':
             viewByDepartments();
             break;
+        case 'Exit':
+            console.log("Goodbye (;⌓;)");
+            db.end();
+            break;
     }
 
 
@@ -285,7 +290,7 @@ const actionChoices = [
         message: 'What action would you like to take with the database?',
         default: '',
         choices: ["View all departments", "View all roles", "View all employees", "Add a department",
-            "Add a role", "Add an employee", "Update an employee role", "View employees by manager", "View employees by department"]
+            "Add a role", "Add an employee", "Update an employee role", "View employees by manager", "View employees by department", "Exit"]
     }
 ];
 
