@@ -1,9 +1,10 @@
+// Npm packages required
 const inquirer = require('inquirer');
 const mysql = require('mysql2');
 const cTable = require('console.table');
 const mysqlPromise = require('mysql2/promise');
 
-
+// db variable to create connection to database
 const db = mysql.createConnection(
     {
         host: 'localhost',
@@ -14,6 +15,7 @@ const db = mysql.createConnection(
     console.log(`Connected to database.`)
 );
 
+// Connection elements that will go into createConnection function used in async functions
 const connectElements = {
     host: 'localhost',
     user: 'root',
@@ -22,7 +24,7 @@ const connectElements = {
 }
 
 
-
+// Function to display departments in database
 const viewDepartments = () => {
     db.query('SELECT * FROM departments', (err, results) => {
         if (err) {
@@ -34,6 +36,7 @@ const viewDepartments = () => {
     });
 };
 
+// Function to display roles in database
 const viewRoles = () => {
     db.query('SELECT * FROM roles', (err, results) => {
         if (err) {
@@ -45,6 +48,7 @@ const viewRoles = () => {
     });
 };
 
+// Function to display employees in database
 const viewEmployees = () => {
     db.query("SELECT employees.id, employees.first_name, employees.last_name, roles.title, departments.name AS department, roles.salary, CONCAT(e.first_name, ' ' ,e.last_name) AS manager FROM employees INNER JOIN roles on roles.id = employees.role_id INNER JOIN departments on departments.id = roles.department_id left join employees e on employees.manager_id = e.id;", function (err, results) {
         if (err) {
@@ -56,6 +60,7 @@ const viewEmployees = () => {
     });
 };
 
+// Function to add department to database using async functions and uses await with promise wrapper on query functions.
 const addDepartment = async () => {
 
     const connection = await mysqlPromise.createConnection(connectElements);
@@ -73,6 +78,7 @@ const addDepartment = async () => {
     startPrompt();
 };
 
+// Function to add role to database using async functions and uses await with promise wrapper on query functions.
 const addRole = async () => {
     let departmentsArray = [];
 
@@ -108,6 +114,7 @@ const addRole = async () => {
     startPrompt();
 };
 
+// Function to add employee to database using async functions and uses await with promise wrapper on query functions.
 const addEmployee = async () => {
     let managersArray = [];
     let rolesArray = [];
@@ -155,7 +162,7 @@ const addEmployee = async () => {
     startPrompt();
 };
 
-
+// Function to update an employee's role in the database using async function and await statements.
 const updateEmployee = async () => {
     let employeesArray = [];
     let rolesArray = [];
@@ -192,6 +199,7 @@ const updateEmployee = async () => {
     startPrompt();
 };
 
+// Function to view employees based on their manager, separate query lines are used in order to get the correct amount of employees.
 const viewByManagers = async () => {
     let managersArray = [];
 
@@ -219,7 +227,7 @@ const viewByManagers = async () => {
 
 }
 
-
+// Asynchronous function that has prompts to select which action to take with the database and a switch function that takes in the action choice as a case.
 const startPrompt = async () => {
 
     const userChoice = await inquirer.prompt(actionChoices);
@@ -258,6 +266,7 @@ const startPrompt = async () => {
 
 }
 
+// Array containing the prompted question
 const actionChoices = [
     {
         type: 'list',
@@ -269,5 +278,6 @@ const actionChoices = [
     }
 ];
 
+// Export startPrompt function to be able to call in other files.
 module.exports = startPrompt;
 

@@ -1,4 +1,5 @@
 DELETE FROM departments;
+-- Seeding departments table for starter interface in terminal.
 INSERT INTO departments (id, name)
 VALUES
     ( 1, "Information Technology"),
@@ -10,6 +11,7 @@ VALUES
     ( 7, "Leadership");
 
 DELETE FROM roles;
+-- Seeding roles table for starter interface in terminal.
 INSERT INTO roles (title, salary, department_id)
 VALUES
     ("CEO", 1000000.01, 7),
@@ -25,6 +27,7 @@ VALUES
     ("Onboarder", 80000.09, 6);
 
 DELETE FROM employees;
+-- Seeding employees table for starter interface in terminal.
 INSERT INTO employees (first_name, last_name, role_id, manager_id)
 VALUES
     ("Jason", "Barrera", 1, NULL),

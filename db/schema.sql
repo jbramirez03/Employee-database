@@ -4,11 +4,13 @@ CREATE DATABASE employees_db;
 
 USE employees_db;
 
+-- Table for departments in database
 CREATE TABLE departments (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(30) NOT NULL
 );
 
+-- Table for roles in database.
 CREATE TABLE roles (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(30) NOT NULL,
@@ -18,6 +20,7 @@ CREATE TABLE roles (
     REFERENCES departments(id)
 );
 
+-- Table for employees in database.
 CREATE TABLE employees (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
     first_name VARCHAR(30),
